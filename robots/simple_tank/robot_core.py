@@ -35,6 +35,9 @@ class BasicTankDrive(commands2.TimedCommandRobot):
 
         self.subsystems = dict()
         self.commands = dict()
+        self.controllers = dict()
+
+        self.controllers[0] = wpilib.PS4Controller(0)
 
         motors = {
             motor_id: ctre.WPI_TalonFX(motor_spec["port"])
@@ -59,8 +62,12 @@ class BasicTankDrive(commands2.TimedCommandRobot):
         )
 
         self.commands["tank_drive"] = TankDrive(
-            utils.getStick(wpilib.XboxController.Axis.kRightY, True),
-            utils.getStick(wpilib.XboxController.Axis.kLeftY, False),
+            utils.getStick(
+                self.controllers[0], wpilib.PS4Controller.Axis.kRightY, True
+            ),
+            utils.getStick(
+                self.controllers[0], wpilib.PS4Controller.Axis.kLeftY, False
+            ),
             self.subsystems["drivetrain"]
         )
 

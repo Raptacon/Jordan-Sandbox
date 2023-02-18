@@ -1,11 +1,10 @@
-import wpilib
 import wpimath
 
-def getStick(axis, invert=False, port=0):
+def getStick(controller, axis, invert=False):
     sign = -1.0 if invert else 1.0
     slew = wpimath.filter.SlewRateLimiter(3)
     return lambda: slew.calculate(
         wpimath.applyDeadband(
-            sign * wpilib.XboxController(port).getRawAxis(axis), 0.1
+            sign * controller.getRawAxis(axis), 0.1
         )
     )
