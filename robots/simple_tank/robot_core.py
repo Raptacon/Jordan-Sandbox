@@ -87,24 +87,13 @@ class BasicTankDrive(commands2.TimedCommandRobot):
 
     def autonomousInit(self):
         if "drivetrain" in self.subsystems:
-            self.subsystems["drivetrain"] \
-                .setDefaultCommand(self.commands["auto_tank_drive"])
+            if "auto_tank_drive" in self.commands:
+                self.commands["auto_tank_drive"].schedule()
 
-    #def autonomousPeriodic(self):
-
-        # autonomous_speed = 0.4
-        # if self.timer.get() < 2:
-        #     self.subsystems["drivetrain"].drive(
-        #         autonomous_speed, autonomous_speed
-        #     )
-        # elif self.timer.get() < 4:
-        #     self.subsystems["drivetrain"].drive(
-        #         -1 * autonomous_speed, -1 * autonomous_speed
-        #     )
-        # else:
-        #     self.subsystems["drivetrain"].drive(0, 0)
 
     def teleopInit(self):
         if "drivetrain" in self.subsystems:
+            if "auto_tank_drive" in self.commands:
+                self.commands["auto_tank_drive"].cancel()
             self.subsystems["drivetrain"] \
                 .setDefaultCommand(self.commands["tank_drive"])

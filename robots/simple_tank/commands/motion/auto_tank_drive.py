@@ -1,5 +1,18 @@
 import commands2
 
+
+def get_speed_transform(current_time):
+    if current_time < 0.5:
+        return 0
+    if current_time < 2.5:
+        return 1
+    if current_time < 4.5:
+        return 0
+    if current_time < 6.5:
+        return -1
+    return 0
+
+
 class AutoTankDrive(commands2.CommandBase):
     def __init__(self, speed, timer, drivetrain):
         super().__init__()
@@ -13,10 +26,10 @@ class AutoTankDrive(commands2.CommandBase):
     def execute(self):
         current_time = self.timer.get()
         auto_speed = self.speed
-        if (current_time > 2) and (current_time < 4):
-            auto_speed = -1 * self.speed
-        if current_time >= 4:
-            auto_speed = 0
+
+        speed_transform = get_speed_transform(current_time)
+        auto_speed = self.speed * speed_transform
+
         self.drivetrain.drive(
             auto_speed, auto_speed
         )
@@ -25,8 +38,5 @@ class AutoTankDrive(commands2.CommandBase):
         self.drivetrain.drive(0, 0)
 
     def isFinished(self):
-        current_time = self.timer.get()
-        if current_time >= 4:
-            return True
         return False
     
