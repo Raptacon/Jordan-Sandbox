@@ -8,6 +8,9 @@ import wpilib
 
 class RobotRunner(commands2.TimedCommandRobot):
     def robotInit(self):
+        self.timer = wpilib.Timer()
+        self.timer.start()
+
         self.robot_shell = BasicTankDrive()
 
     def disabledInit(self) -> None:
@@ -17,6 +20,7 @@ class RobotRunner(commands2.TimedCommandRobot):
         self.robot_shell.disabledExit()
 
     def autonomousInit(self) -> None:
+        self.timer.reset()
         self.robot_shell.autonomousInit()
 
     def autonomousPeriodic(self) -> None:

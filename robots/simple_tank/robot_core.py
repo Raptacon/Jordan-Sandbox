@@ -37,8 +37,14 @@ class BasicTankDrive(commands2.TimedCommandRobot):
         self.commands = dict()
         self.controllers = dict()
 
+        self.__setupControllers()
+        self.__setupSubsystems()
+        self.__setupCommands()
+
+    def __setupControllers(self):
         self.controllers[0] = wpilib.PS4Controller(0)
 
+    def __setupSubsystems(self):
         motors = {
             motor_id: ctre.WPI_TalonFX(motor_spec["port"])
             for motor_id, motor_spec in motor_config.items()
@@ -61,6 +67,7 @@ class BasicTankDrive(commands2.TimedCommandRobot):
             self.motor_groups["left"], self.motor_groups["right"]
         )
 
+    def __setupCommands(self):
         self.commands["tank_drive"] = TankDrive(
             utils.getStick(
                 self.controllers[0], wpilib.PS4Controller.Axis.kRightY, True
