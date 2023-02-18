@@ -1,70 +1,39 @@
 # Internal imports
-import utils
-
-from commands.motion.drive_tank import TankDrive
-from subsytems.drivetrain.two_sides import TwoSidedLinearDrivetrain
+from robot_core import BasicTankDrive
 
 # Third-party imports
 import commands2
-import ctre
 import wpilib
 
-motor_config = {
-    "FL": {
-        "side": "left",
-        "port": 10
-    },
-    "FR": {
-        "side": "right",
-        "port": 11
-    },
-    "BL": {
-        "side": "left",
-        "port": 12
-    },
-    "BR": {
-        "side": "right",
-        "port": 13
-    }
-}
 
+class RobotRunner(commands2.TimedCommandRobot):
+    def robotInit(self):
+        self.robot_shell = BasicTankDrive()
 
-class BasicTankDrive(commands2.TimedCommandRobot):
-    def __init__(self, period=0.02):
-        super().__init__(period)
+    def disabledInit(self) -> None:
+        self.robot_shell.disabledInit()
 
-        self.subsystems = dict()
-        self.commands = dict()
+    def disabledExit(self) -> None:
+        self.robot_shell.disabledExit()
 
-        motors = {
-            motor_id: ctre.WPI_TalonFX(motor_spec["port"])
-            for motor_id, motor_spec in motor_config.items()
-        }
+    def autonomousInit(self) -> None:
+        self.robot_shell.autonomousInit()
 
-        motor_groups = dict()
-        for motor_id, motor in motors.items():
-            motor_side = motor_config[motor_id]["side"]
-            if motor_side in motor_groups:
-                motor_groups[motor_side].append(motor)
-            else:
-                motor_groups[motor_side] = [motor]
-        
-        self.motor_groups = {
-            motor_side: wpilib.MotorControllerGroup(*motor_group)
-            for motor_side, motor_group in motor_groups.items()
-        }
+    def autonomousPeriodic(self) -> None:
+        self.robot_shell.autonomousPeriodic()
 
-        self.subsystems["drivetrain"] = TwoSidedLinearDrivetrain(
-            motor_groups["left"], motor_groups["right"]
-        )
+    def teleopInit(self) -> None:
+        self.robot_shell.teleopInit()
 
-        self.commands["tank_drive"] = TankDrive(
-            utils.getStick(wpilib.XboxController.Axis.kRightY, True),
-            utils.getStick(wpilib.XboxController.Axis.kLeftY, False),
-            self.subsystems["drivetrain"]
-        )
+    def teleopPeriodic(self) -> None:
+        self.robot_shell.teleopPeriodic()
 
-    def teleopInit(self):
-        if "drivetrain" in self.subsystems:
-            self.subsystems["drivetrain"] \
-                .setDefaultCommand(self.commands["tank_drive"])
+    def testInit(self) -> None:
+        commands2.CommandScheduler.getInstance().cancelAll()
+        self.robot_shell.testInit()
+
+    def testPeriodic(self) -> None:
+        self.robot_shell.testPeriodic()
+
+if __name__ == "__main__":
+    wpilib.run(RobotRunner)
