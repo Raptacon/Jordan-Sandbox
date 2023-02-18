@@ -11,7 +11,7 @@ class RobotRunner(commands2.TimedCommandRobot):
         self.timer = wpilib.Timer()
         self.timer.start()
 
-        self.robot_shell = BasicTankDrive()
+        self.robot_shell = BasicTankDrive(self.timer)
 
     def disabledInit(self) -> None:
         self.robot_shell.disabledInit()

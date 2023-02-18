@@ -30,8 +30,10 @@ motor_config = {
 
 
 class BasicTankDrive(commands2.TimedCommandRobot):
-    def __init__(self, period=0.02):
+    def __init__(self, timer, period=0.02):
         super().__init__(period)
+
+        self.timer = timer
 
         self.subsystems = dict()
         self.commands = dict()
@@ -77,6 +79,19 @@ class BasicTankDrive(commands2.TimedCommandRobot):
             ),
             self.subsystems["drivetrain"]
         )
+
+    def autonomousPeriodic(self):
+        autonomous_speed = 0.4
+        if self.timer.get() < 2:
+            self.subsystems["drivetrain"].drive(
+                autonomous_speed, autonomous_speed
+            )
+        elif self.timer.get() < 4:
+            self.subsystems["drivetrain"].drive(
+                -1 * autonomous_speed, -1 * autonomous_speed
+            )
+        else:
+            self.subsystems["drivetrain"].drive(0, 0)
 
     def teleopInit(self):
         if "drivetrain" in self.subsystems:
