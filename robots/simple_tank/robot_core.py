@@ -1,6 +1,7 @@
 # Internal imports
 import utils
 
+from commands.motion.auto_tank_drive import AutoTankDrive
 from commands.motion.drive_tank import TankDrive
 from subsytems.drivetrain.two_sides import TwoSidedLinearDrivetrain
 
@@ -80,18 +81,28 @@ class BasicTankDrive(commands2.TimedCommandRobot):
             self.subsystems["drivetrain"]
         )
 
-    def autonomousPeriodic(self):
-        autonomous_speed = 0.4
-        if self.timer.get() < 2:
-            self.subsystems["drivetrain"].drive(
-                autonomous_speed, autonomous_speed
-            )
-        elif self.timer.get() < 4:
-            self.subsystems["drivetrain"].drive(
-                -1 * autonomous_speed, -1 * autonomous_speed
-            )
-        else:
-            self.subsystems["drivetrain"].drive(0, 0)
+        self.commands["auto_tank_drive"] = AutoTankDrive(
+            0.4, self.timer, self.subsystems["drivetrain"]
+        )
+
+    def autonomousInit(self):
+        if "drivetrain" in self.subsystems:
+            self.subsystems["drivetrain"] \
+                .setDefaultCommand(self.commands["auto_tank_drive"])
+
+    #def autonomousPeriodic(self):
+
+        # autonomous_speed = 0.4
+        # if self.timer.get() < 2:
+        #     self.subsystems["drivetrain"].drive(
+        #         autonomous_speed, autonomous_speed
+        #     )
+        # elif self.timer.get() < 4:
+        #     self.subsystems["drivetrain"].drive(
+        #         -1 * autonomous_speed, -1 * autonomous_speed
+        #     )
+        # else:
+        #     self.subsystems["drivetrain"].drive(0, 0)
 
     def teleopInit(self):
         if "drivetrain" in self.subsystems:
