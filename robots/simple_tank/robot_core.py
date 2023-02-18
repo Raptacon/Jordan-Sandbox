@@ -55,7 +55,7 @@ class BasicTankDrive(commands2.TimedCommandRobot):
         }
 
         self.subsystems["drivetrain"] = TwoSidedLinearDrivetrain(
-            motor_groups["left"], motor_groups["right"]
+            self.motor_groups["left"], self.motor_groups["right"]
         )
 
         self.commands["tank_drive"] = TankDrive(

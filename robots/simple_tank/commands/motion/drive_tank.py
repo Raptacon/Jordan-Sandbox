@@ -9,6 +9,8 @@ class TankDrive(commands2.CommandBase):
         self.right_input = right_input
         self.drivetrain = drivetrain
 
+        self.addRequirements(self.drivetrain)
+
     def execute(self):
         self.drivetrain.drive(
             self.left_input(), self.right_input()
