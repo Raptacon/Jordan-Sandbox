@@ -48,13 +48,13 @@ class BasicTankDrive(commands2.TimedCommandRobot):
         self.controllers[0] = wpilib.PS4Controller(0)
 
     def __setupSubsystems(self):
-        motors = {
+        self.motors = {
             motor_id: ctre.WPI_TalonFX(motor_spec["port"])
             for motor_id, motor_spec in motor_config.items()
         }
 
         motor_groups = dict()
-        for motor_id, motor in motors.items():
+        for motor_id, motor in self.motors.items():
             motor_side = motor_config[motor_id]["side"]
             if motor_side in motor_groups:
                 motor_groups[motor_side].append(motor)
@@ -89,7 +89,24 @@ class BasicTankDrive(commands2.TimedCommandRobot):
         if "drivetrain" in self.subsystems:
             if "auto_tank_drive" in self.commands:
                 self.commands["auto_tank_drive"].schedule()
+            
+    def autonomousPeriodic(self):
+        motor_sensors = {
+            "FL": self.motors["FL"].getSensorCollection(),
+            "FR": self.motors["FR"].getSensorCollection(),
+            "BL": self.motors["BL"].getSensorCollection(),
+            "BR": self.motors["BR"].getSensorCollection()
+        }
 
+        distance_readings = [
+            ("Front Left Distance", motor_sensors["FL"].getIntegratedSensorVelocity()),
+            ("Back Left Distance", motor_sensors["BL"].getIntegratedSensorVelocity()),
+            ("Front Right Distance", motor_sensors["FR"].getIntegratedSensorVelocity()),
+            ("Back Right Distance", motor_sensors["BR"].getIntegratedSensorVelocity())
+        ]
+
+        for distance_reading in distance_readings:
+            wpilib.SmartDashboard.putNumber(*distance_reading)
 
     def teleopInit(self):
         if "drivetrain" in self.subsystems:
