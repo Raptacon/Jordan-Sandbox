@@ -10,6 +10,14 @@ coverage = "*"
 pyfrc = "*"
 wpilib = "*"
 robotpy = {version = "==2023.*", extras = ["commands2", "ctre", "navx", "pathplannerlib", "photonvision", "playingwithfusion", "rev", "sim"]}
+pillow = "*"
+numpy = "*"
+opencv-python = "*"
+matplotlib = "*"
+pandas = "*"
+ipykernel = "*"
+scipy = "*"
+statsmodels = "*"
 
 [dev-packages]
 
